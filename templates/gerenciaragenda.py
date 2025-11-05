@@ -2,31 +2,32 @@ import streamlit as st
 import pandas as pd
 from views import View
 import time
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 class GerenciarAgendaUI:
+    @staticmethod
     def main():
         st.header("Agenda")
-        tab1, tab2= st.tabs(["Listar", "Inserir"])
-        with tab1: GerenciarAgendaUI.listar()
-        with tab2: GerenciarAgendaUI.inserir()
+        tab1, tab2 = st.tabs(["Listar", "Inserir"])
+        with tab1:
+            GerenciarAgendaUI.listar()
+        with tab2:
+            GerenciarAgendaUI.inserir()
 
+    @staticmethod
     def listar():
-        profissional = View.profissional_listar_id(st.session_state["profissional_id"])
+        profissional = View.profissional_listar_id(st.session_state["usuario_id"])
         if profissional is None:
             st.warning("Nenhum profissional logado.")
             return
-
         horarios = View.horario_listar()
         if len(horarios) == 0:
             st.info("Nenhum horário cadastrado.")
             return
-
         horarios_profissional = [h for h in horarios if h.get_id_profissional() == profissional.get_id()]
         if len(horarios_profissional) == 0:
             st.info("Você ainda não abriu horários na sua agenda.")
             return
-
         dic = []
         for obj in horarios_profissional:
             cliente = View.cliente_listar_id(obj.get_id_cliente())
@@ -43,9 +44,9 @@ class GerenciarAgendaUI:
         df = pd.DataFrame(dic)
         st.dataframe(df, hide_index=True)
 
+    @staticmethod
     def inserir():
-
-        profissional = View.profissional_listar_id(st.session_state["profissional_id"])
+        profissional = View.profissional_listar_id(st.session_state["usuario_id"])
         if profissional is None:
             st.warning("Nenhum profissional logado.")
             return
@@ -56,8 +57,6 @@ class GerenciarAgendaUI:
         intervalo = st.number_input("Intervalo entre atendimentos (em minutos)", min_value=5, step=5)
 
         if st.button("Gerar horários"):
-            from datetime import datetime, timedelta
-
             inicio = datetime.combine(data, hora_inicial)
             fim = datetime.combine(data, hora_final)
             horarios_gerados = []

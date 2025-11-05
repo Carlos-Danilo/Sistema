@@ -3,10 +3,14 @@ import time
 from views import View
 
 class AlterarSenhaUI:
+    @staticmethod
     def main():
         st.header("Alterar Senha (Admin)")
 
-        admin = View.cliente_listar_id(st.session_state["cliente_id"])
+    
+        usuario_id = st.session_state["usuario_id"]
+        admin = View.cliente_listar_id(usuario_id)
+
         if admin is None or admin.get_email() != "admin":
             st.warning("Apenas o administrador pode alterar a senha aqui.")
             return
@@ -25,8 +29,7 @@ class AlterarSenhaUI:
                     admin.get_nome(),
                     admin.get_email(),
                     admin.get_fone(),
-                    nova_senha,
-                    admin.get_foto()
+                    nova_senha
                 )
                 st.success("Senha alterada com sucesso!")
                 time.sleep(2)

@@ -3,10 +3,10 @@ import time
 from views import View
 
 class ConfirmarServicoUI:
+    @staticmethod
     def main():
         st.header("Confirmar Serviço")
-
-        profissional = View.profissional_listar_id(st.session_state["profissional_id"])
+        profissional = View.profissional_listar_id(st.session_state["usuario_id"])
         if profissional is None:
             st.warning("Nenhum profissional logado.")
             return
@@ -15,7 +15,6 @@ class ConfirmarServicoUI:
         if len(horarios) == 0:
             st.info("Nenhum horário cadastrado.")
             return
-
         horarios_profissional = [
             h for h in horarios
             if h.get_id_profissional() == profissional.get_id() and h.get_id_cliente() is not None
@@ -27,7 +26,7 @@ class ConfirmarServicoUI:
         op = st.selectbox(
             "Informe o horário",
             horarios_profissional,
-            format_func=lambda h: f"{h.get_id()} - {h.get_data().strftime('%d/%m/%Y %H:%M')} - {h.get_confirmado()}"
+            format_func=lambda h: f"{h.get_id()} - {h.get_data().strftime('%d/%m/%Y %H:%M')} - Confirmado: {h.get_confirmado()}"
         )
 
         cliente = View.cliente_listar_id(op.get_id_cliente())
@@ -42,14 +41,17 @@ class ConfirmarServicoUI:
         )
 
         if st.button("Confirmar"):
-            View.horario_atualizar(
-                op.get_id(),
-                op.get_data(),
-                True, 
-                op.get_id_cliente(),
-                op.get_id_servico(),
-                op.get_id_profissional()
-            )
-            st.success("Serviço confirmado com sucesso!")
-            time.sleep(2)
-            st.rerun()
+            try:
+                View.horario_atualizar(
+                    op.get_id(),
+                    op.get_data(),
+                    True, 
+                    op.get_id_cliente(),
+                    op.get_id_servico(),
+                    op.get_id_profissional()
+                )
+                st.success("Serviço confirmado com sucesso!")
+                time.sleep(2)
+                st.rerun()
+            except ValueError as erro:
+                st.error(erro)

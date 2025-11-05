@@ -51,11 +51,23 @@ class ManterHorarioUI:
         if st.button("Inserir"):
             try:
                 id_cliente = None
+                id_profissional = None
                 id_servico = None
-                if cliente != None: id_cliente = cliente.get_id()
-                if profissional != None: id_profissional = profissional.get_id()
-                if servico != None: id_servico = servico.get_id()
-                View.horario_inserir(datetime.strptime(data, "%d/%m/%Y %H:%M"), confirmado, id_cliente, id_servico, id_profissional)
+
+                if cliente is not None:
+                    id_cliente = cliente.get_id()
+                if profissional is not None:
+                    id_profissional = profissional.get_id()
+                if servico is not None:
+                    id_servico = servico.get_id()
+
+                View.horario_inserir(
+                    datetime.strptime(data, "%d/%m/%Y %H:%M"),
+                    confirmado,
+                    id_cliente,
+                    id_servico,
+                    id_profissional
+                )
                 st.success("Horário inserido com sucesso")
             except ValueError as erro:
                 st.error(erro)

@@ -1,6 +1,7 @@
 from models.servico import Servico, ServicoDAO
 from models.cliente import Cliente, ClienteDAO
 from models.horario import Horario, HorarioDAO
+from models.feedback import Feedback, FeedbackDAO
 from models.profissional import Profissional, ProfissionalDAO
 from datetime import datetime
 
@@ -72,8 +73,7 @@ class View:
         for obj in View.horario_listar():
             if obj.get_id_profissional() == id:
                 raise ValueError("Profissional tem agendamentos: não é possível excluir")
-        profissional = Profissional(id, "", "", "", "", "")
-        ProfissionalDAO.excluir(profissional)
+        ProfissionalDAO.excluir_id(id)
 
     def profissional_autenticar(email, senha):
         for p in View.profissional_listar():
@@ -114,8 +114,10 @@ class View:
         if not isinstance(data, datetime):
             raise ValueError("Data inválida")
         for h in View.horario_listar():
-            if h.get_id_profissional() == id_profissional and h.get_data() == data:
-                raise ValueError("Profissional já possui horário nessa data e hora")
+            if h.get_id_profissional() == id_profissional:
+                if h.get_data().strftime("%Y-%m-%d %H:%M") == data.strftime("%Y-%m-%d %H:%M"):
+                    print(f"Ignorando horário duplicado: {data}")
+                    return
         c = Horario(0, data)
         c.set_confirmado(confirmado)
         c.set_id_cliente(id_cliente)
@@ -123,34 +125,64 @@ class View:
         c.set_id_profissional(id_profissional)
         HorarioDAO.inserir(c)
 
+
     def horario_listar():
         return HorarioDAO.listar()
 
     def horario_atualizar(id, data, confirmado, id_cliente, id_servico, id_profissional):
         if not isinstance(data, datetime):
             raise ValueError("Data inválida")
-        for h in View.horario_listar():
-            if h.get_id() != id and h.get_id_profissional() == id_profissional and h.get_data() == data:
-                raise ValueError("Profissional já possui horário nessa data e hora")
-        c = Horario(id, data)
-        c.set_confirmado(confirmado)
-        c.set_id_cliente(id_cliente)
-        c.set_id_servico(id_servico)
-        c.set_id_profissional(id_profissional)
-        HorarioDAO.atualizar(c)
+
+        horario = View.horario_listar_id(id)
+        if horario is None:
+            raise ValueError("Horário não encontrado")
+
+        horario.set_data(data)
+        horario.set_confirmado(confirmado)
+        horario.set_id_cliente(id_cliente)
+        horario.set_id_servico(id_servico)
+        horario.set_id_profissional(id_profissional)
+
+        HorarioDAO.atualizar(horario)
 
     def horario_excluir(id):
         for obj in View.horario_listar():
-            if obj.get_id() == id and obj.get_confirmado() == True:
+            if obj.get_id() == id and obj.get_confirmado():
                 raise ValueError("Horário confirmado: não é possível excluir")
-        c = Horario(id, None)
-        HorarioDAO.excluir(c)
+        HorarioDAO.excluir_id(id)
+
+    def horario_listar_id(id):
+        return HorarioDAO.listar_id(id)
 
     def horario_agendar_horario(id_profissional):
         r = []
         agora = datetime.now()
         for h in View.horario_listar():
-            if h.get_data() >= agora and not h.get_confirmado() and h.get_id_cliente() is None and h.get_id_profissional() == id_profissional:
+            data_horario = h.get_data()
+            if isinstance(data_horario, str):
+                try:
+                    data_horario = datetime.strptime(data_horario, "%Y-%m-%d %H:%M:%S")
+                except:
+                    continue
+            if (
+                data_horario >= agora
+                and not h.get_confirmado()
+                and not h.get_id_cliente()
+                and h.get_id_profissional() == id_profissional
+            ):
                 r.append(h)
         r.sort(key=lambda h: h.get_data())
         return r
+
+
+
+     # ---------- FEEDBACK ----------
+    def feedback_inserir(id_cliente, id_profissional, id_servico, nota, comentario):
+        f = Feedback(0, id_cliente, id_profissional, id_servico, nota, comentario)
+        FeedbackDAO.inserir(f)
+
+    def feedback_listar():
+        return FeedbackDAO.listar()
+
+    def feedback_listar_profissional(id_profissional):
+        return [f for f in FeedbackDAO.listar() if f.get_id_profissional() == id_profissional]

@@ -36,6 +36,16 @@ class DAO(ABC):
         if aux != None:
             cls._objetos.remove(aux)
             cls.salvar()
+
+    @classmethod
+    def excluir_id(cls, id):
+        cls.abrir()
+        aux = cls.listar_id(id)
+        if aux is not None:
+            cls._objetos.remove(aux)
+            cls.salvar()
+
+
     @classmethod
     @abstractmethod
     def abrir(cls):

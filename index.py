@@ -13,6 +13,8 @@ from templates.agendarservicoUI import AgendarServicoUI
 from templates.gerenciaragenda import GerenciarAgendaUI
 from templates.meu_servicoUI import MeusServicosUI
 from templates.c_servicoUI import ConfirmarServicoUI
+from templates.feedbackAdminUI import FeedbackAdminUI
+from templates.feedbackUI import FeedbackUI
 from views import View
 
 
@@ -44,13 +46,16 @@ class IndexUI:
 
     @staticmethod
     def menu_cliente():
-        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Agendar Serviço", "Meus Serviços"])
+        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Agendar Serviço", "Meus Serviços", "Deixar Feedback"])
         if op == "Meus Dados":
             PerfilClienteUI.main()
         if op == "Agendar Serviço":
             AgendarServicoUI.main()
         if op == "Meus Serviços":
             MeusServicosUI.main()
+        if op == "Deixar Feedback":
+            FeedbackUI.main()
+
 
     @staticmethod
     def menu_profissional():
@@ -61,6 +66,7 @@ class IndexUI:
             GerenciarAgendaUI.main()
         if op == "Confirmar Serviço":
             ConfirmarServicoUI.main()
+       
 
     @staticmethod
     def menu_admin():
@@ -69,7 +75,8 @@ class IndexUI:
             "Cadastro de Serviços",
             "Cadastro de Horários",
             "Cadastro de Profissionais",
-            "Alterar Senha"
+            "Alterar Senha",
+            "Feedbacks"
         ])
         if op == "Cadastro de Clientes":
             ManterClienteUI.main()
@@ -81,6 +88,9 @@ class IndexUI:
             ManterProfissionalUI.main()
         if op == "Alterar Senha":
             AlterarSenhaUI.main()
+        if op == "Feedbacks":
+            FeedbackAdminUI.main()
+
 
     @staticmethod
     def sair_do_sistema():
