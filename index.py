@@ -1,4 +1,5 @@
 import streamlit as st
+from templates.meusfeedbacksUI import MeusFeedbacksUI
 from templates.manterclienteUI import ManterClienteUI
 from templates.manterServicoUI import ManterServicoUI
 from templates.manterhorarioUI import ManterHorarioUI
@@ -59,14 +60,15 @@ class IndexUI:
 
     @staticmethod
     def menu_profissional():
-        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Gerenciar Agenda", "Confirmar Serviço"])
+        op = st.sidebar.selectbox("Menu", ["Meus Dados", "Gerenciar Agenda", "Confirmar Serviço", "Minhas Avaliações"])
         if op == "Meus Dados":
             PerfilProfissionalUI.main()
         if op == "Gerenciar Agenda":
             GerenciarAgendaUI.main()
         if op == "Confirmar Serviço":
             ConfirmarServicoUI.main()
-       
+        if op == "Minhas Avaliações":
+            MeusFeedbacksUI.main()
 
     @staticmethod
     def menu_admin():

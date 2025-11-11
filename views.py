@@ -8,7 +8,7 @@ from datetime import datetime
 
 class View:
 
-    # ---------- CLIENTE ----------
+    #ciente
     def cliente_inserir(nome, email, fone, senha):
         for obj in View.cliente_listar():
             if obj.get_email() == email or email == "admin":
@@ -48,7 +48,7 @@ class View:
                 return {"id": c.get_id(), "nome": c.get_nome()}
         return None
 
-    # ---------- PROFISSIONAL ----------
+    #profissional
     def profissional_inserir(nome, especialidade, conselho, email, senha):
         for obj in View.profissional_listar():
             if obj.get_email() == email:
@@ -81,7 +81,7 @@ class View:
                 return {"id": p.get_id(), "nome": p.get_nome()}
         return None
 
-    # ---------- SERVIÇO ----------
+    # serviços
     def servico_listar():
         return ServicoDAO.listar()
 
@@ -109,7 +109,7 @@ class View:
         c = Servico(id, "sem descrição", 0)
         ServicoDAO.excluir(c)
 
-    # ---------- HORÁRIO ----------
+    #horários
     def horario_inserir(data, confirmado, id_cliente, id_servico, id_profissional):
         if not isinstance(data, datetime):
             raise ValueError("Data inválida")
@@ -136,13 +136,11 @@ class View:
         horario = View.horario_listar_id(id)
         if horario is None:
             raise ValueError("Horário não encontrado")
-
         horario.set_data(data)
         horario.set_confirmado(confirmado)
         horario.set_id_cliente(id_cliente)
         horario.set_id_servico(id_servico)
         horario.set_id_profissional(id_profissional)
-
         HorarioDAO.atualizar(horario)
 
     def horario_excluir(id):
@@ -176,7 +174,7 @@ class View:
 
 
 
-     # ---------- FEEDBACK ----------
+     #feedback
     def feedback_inserir(id_cliente, id_profissional, id_servico, nota, comentario):
         f = Feedback(0, id_cliente, id_profissional, id_servico, nota, comentario)
         FeedbackDAO.inserir(f)
